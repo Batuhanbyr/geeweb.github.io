@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="Asciidoctor 0.1.4">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeWeb</title>
+    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css">
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1><span class="image"><img src="images/fİrat.png" alt="arc42" style="max-width: 10%; max-height: 10%;"></span> GeWeb (Güneş Enerjisi Web Projesi)</h1>
+<span id="revnumber">version 8.2 TR,</span>
+<span id="revdate">January 2023</span>
+<br><span id="revremark">(based upon AsciiDoc version)</span>
+<div id="toc" class="toc2">
+<div id="toctitle">Tablo İçeriği</div>
+<ul class="sectlevel1">
+<li><a href="#section-introduction-and-goals">1. Giriş ve Hedefler</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#_requirements_overview">1.1. Gereksinimlere genel bakış</a></li>
+<li><a href="#_quality_goals">1.2. Paydaşlar</a></li>
+</ul>
+</li>
+<li><a href="#section-architecture-constraints">2. Mimari Kısıtlamalar</a>
+    <ul class="sectlevel2">
+        <li><a href="#_section-architecture_2.1">2.1. Teknik Kıstlamalar</a></li>
+        <li><a href="#_section-architecture_2.2">2.2. Organizasyonel Kısıtlamalar</a></li>
+        <li><a href="#_section-architecture_2.3">2.3. Geleneksel Kısıtlamalar</a></li>
+    </ul>
+</li>
+<li><a href="#section-system-scope-and-context">3. Sistem Kapsamı ve İçeriği</a>
+<ul class="sectlevel2">
+    <li><a href="#_section-system-scope_3.1">3.1. İş Bağlamı</a></li>
+    <li><a href="#_section-system-scope_3.2">3.2. Teknik Bağlam</a></li>
+    <li><a href="#_section-system-scope_3.3">3.3. Teknoloji Kararları</a></li>
+    <li><a href="#_section-system-scope_3.4">3.4. Temel Kalite Hedeflerine Nasıl Ulaşacağımıza İlişkin Kararlar</a></li>
+    <li><a href="#_section-system-scope_3.5">3.5. İlgili Organizasyonel Kararlar</a></li>
+</ul>
+</li>
+<li><a href="#section-solution-strategy">4. Çözüm Stratejisi</a></li>
+<li><a href="#section-building-block-view">5. Bina Blok Görünümü</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#_whitebox_overall_system">5.1. BeyazKutu Genel Sistemi</a></li>
+<li><a href="#_level_2">5.2. Level 2</a></li>
+<li><a href="#_level_3">5.3. Level 3</a></li>
+</ul>
+</li>
+<li><a href="#section-runtime-view">6. Çalışma Zamanı Görünümü</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#__runtime_scenario_1">6.1. &lt;Runtime Scenario 1&gt;</a></li>
+<li><a href="#__runtime_scenario_2">6.2. &lt;Runtime Scenario 2&gt;</a></li>
+</ul>
+</li>
+<li><a href="#section-deployment-view">7. Kesişen Kavramlar</a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#_infrastructure_level_1">7.1. Etki Alanı Modeli</a></li>
+<li><a href="#_infrastructure_level_2">7.2. Mimari ve Tasarım Desenleri</a></li>
+<li><a href="#_infrastructure_level_3">7.3. Test Edilebilirlik</a></li>
+<li><a href="#_infrastructure_level_4">7.4. Koruma ve Güvenlik</a></li>
+</ul>
+</li>
+<li><a href="#section-concepts">8. Tasarım Kararları </a></li>
+<li>
+<ul class="sectlevel2">
+<li><a href="#__em_concept_1_em">8.1. Klasör Yapısı </a></li>
+<li><a href="#__em_concept_2_em">8.2. Barındırma Hizmetleri</a></li>
+</ul>
+</li>
+<li><a href="#section-design-decisions">9. Kalite Gereksinimleri</a>
+<ul class="sectlevel2">
+<li><a href="#section-design_1">9.1. Kalite Ağacı</a></li>
+    <li><a href="#section-design_2">9.2. Kalite Senaryoları</a></li>
+</ul>
+</li>
+
+<li><a href="#section-technical-risks">11. Riskler ve Teknik Borçlar</a></li>
+<li><a href="#section-glossary">12. Sözlük</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<style>
+.arc42help {font-size:small; width: 14px; height: 16px; overflow: hidden; position: absolute; right: 0; padding: 2px 0 3px 2px;}
+.arc42help::before {content: "?";}
+.arc42help:hover {width:auto; height: auto; z-index: 100; padding: 10px;}
+.arc42help:hover::before {content: "";}
+@media print {
+	.arc42help {display:none;}
+}
+</style>
+
+<div class="sect1">
+<h2 id="section-introduction-and-goals"><a class="anchor" href="#section-introduction-and-goals"></a>1. Giriş ve Hedefler</h2>
+    <div class="paragraf">
+        <img src="images/usecase.png" alt="">
+        <p>GeWeb (Güneş Enerji Web Sitesi) bir üniversite projesi olarak geliştirilmekte olan bir yazılım sistemidir. Kullanıcıların kendi bölgelerindeki güneş enerjisine ilişkin çeşitli bilgileri ve toplam güneş radyasyonu haritalarını görüntüleyebilmelerine yardımcı olmak amacıyla tasarlanmıştır.</p>
+        <br>
+        <p>Projenin amacı diğer şehirlerde kurulabilecek ve kullanılabilecek güneş enerji panelleri veya muhtelif güneşten enerji elde edilebilecek sistemlerin önceden alınan çeşitli bilgiler sayesinde verimliliğinin artmasıdır. Sistem, kullanıcıların Türkiye üzerinde farklı konumlardaki güneş enerjisi potansiyelini , ortalama yıllık toplam güneşlenme sürelerine göre ortalama yıllık toplam ışınım değerlerini kWh/m2 elde edebilmelerini sağlayacaktır. Kullanıcılar eklenen yerler hakkında incelemeler yapabilecekler.
+        </p>
+        <br>
+        <p>Projenin ilk odak noktası kullanıcıları olup, enerji üretimi için yatırım yapabilecekleri potansiyel yerleri belirlemelerinde oldukça önemli fikirler kazanmalarını ve bilimsel veriler elde etmelerini sağlayacaktır.
+        </p>
+    </div>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_requirements_overview"><a class="anchor" href="#_requirements_overview"></a>1.1. Gereksinimlere Genel Bakış</h3>
+    <div class="paragraf">
+        <p>GeWeb kullanıcıları şunları yapabilecektir:
+        </p>
+        <br>
+        <ul>
+            <li> Çeşitli bölgelerdeki toplam güneş radyasyonu değerleri</li>
+            <li>Çeşitli bölgelerin ,güneşten enerji üreten sistemleri kurmak için nasıl potansiyellere sahip olduklarını öğrenmek.</li>
+            <li>Bölgelerin yıllık toplam güneşlenme sürelerine bağlı ortalama yıllık ışınım değerlerini kWh/m2 cinsinden elde etmek.</li>
+            <li>GPT ağının sağladığı arama motoru sayesinde kullanıcıların aklına takılan sorular hakkında hızlıca bilgiler elde etmesini sağlamak.</li>
+        </ul>
+    </div>
+
+</div>
+<div class="sect2">
+<h3 id="_quality_goals"><a class="anchor" href="#_quality_goals"></a>1.2. Paydaşlar</h3>
+    <table class="tableblock frame-all grid-all" style="width:100%; ">
+        <colgroup>
+            <col style="width:20%;">
+            <col style="width:40%;">
+            <col style="width:40%;">
+        </colgroup>
+        <thead>
+        <tr>
+            <th class="tableblock halign-left valign-top">Rol/İsim</th>
+            <th class="tableblock halign-left valign-top">İlgili Şahıslar</th>
+            <th class="tableblock halign-left valign-top">Beklentiler</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Ürün Sahipleri</em></p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em> İbrahim DEMİR , Batuhan BAYIR , Burak ERDEN, Nurettin Mutlu TÜVER </em></p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Projenin hayata geçirilmesi ,yürütülmesi ,rehberlik edilmesi, çeşitli kısıtlamalar ve gereksinimler sağlayacaklar.
+            </em></p></td>
+        </tr>
+        <tr>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Kullanıcılar</em></p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em> —————</em></p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em> Siteyi ziyaret ettiklerinde harita üzerinden seçilen bölgenin güneş enerjisi potansiyelini öğrenmek ve bu konudaki çeşitli sayısal verileri elde etmek. Bununla beraber GPT ağının sağladığı arama motoru sayesinde konuya dair çeşitli araştırmalar yapıp faydalı bilgiler elde edebilmek.
+            </em></p></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="sect2">
+
+
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="section-architecture-constraints"><a class="anchor" href="#section-architecture-constraints"></a>2. Mimari Kısıtlamalar</h2>
+    <div class="paragraf">
+        <p>Tüm mimari kısıtlamalar aşağıda yer almaktadır</p>
+    </div>
+    <div class="sect2">
+        <h3 id="_section-architecture_2.1"><a class="anchor" href="#_section-architecture_2.1"></a>2.1. Teknik Kısıtlamalar</h3>
+        <div class="paragraph">
+            <table class="tableblock frame-all grid-all" style="width:100%; ">
+                <colgroup>
+                    <col style="width:20%;">
+                    <col style="width:40%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th class="tableblock halign-left valign-top">Kısıtlama</th>
+                    <th class="tableblock halign-left valign-top">Açıklama</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Haritalar kullanıcıların tam kontrolü altında olmayacaktır.
+                    </em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em> Uygulamanın ana odağı kullanıcıların bilgilendirilmesidir ancak haritalar bilimsel veriler içerdiği için yoruma ve müdahaleye kapalı olması geri.
+                    </em></p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Pod kullanımı</em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Kullanıcılar tarafından paylaşılan tüm bilgiler ,projeye göre ilgili kişisel bölmelerde saklanmalı ve bu bilgilerin gerçek sahipliğini garanti etmelidir.
+                    </em></p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Web uygulaması</em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>GeWeb temel olarak web uygulamasıdır ve kullanıcıların uygulamayı kullanmasını ve erişilmesini kolaylaştırır.
+                    </em></p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Genel yazılım çözümü</em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em> Burada fikir ,yalnızca bir şehre özel bir çözüm değil, ihtiyaç duyulan herhangi bir şehirde veya bölgede uygulanabilecek genel bir çözüm geliştirmektir.
+                    </em></p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>GitHub</em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em> Sürüm kontrolüne ilişkin bir havuzun kullanılması
+                    </em></p></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <h3 id="_section-architecture_2.2"><a class="anchor" href="#_section-architecture_2.2"></a>2.2. Organizasyonel Kısıtlamalar</h3>
+        <div class="sect2">
+            <table class="tableblock frame-all grid-all" style="width:100%; ">
+                <colgroup>
+                    <col style="width:20%;">
+                    <col style="width:40%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th class="tableblock halign-left valign-top">Kısıtlama</th>
+                    <th class="tableblock halign-left valign-top">Açıklama</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Bütçe
+                    </em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em> Takıma herhangi bir bütçe sağlanmıyor; dolayısıyla herhangi bir şey için ödeme yapılması gerekiyorsa bu, takım üyeleri tarafından yapılacaktır.
+                    </em></p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Teslimat tarihleri</em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em> Uygulamanın dağıtımından önce uygun şekilde takip edilmesi gereken her 3 haftada bir 4 teslimat vardır.
+
+                    </em></p></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <h3 id="_section-architecture_2.3"><a class="anchor" href="#_section-architecture_2.3"></a>2.3. Geleneksel Kısıtlamalar</h3>
+        <div class="sect2">
+            <table class="tableblock frame-all grid-all" style="width:100%; ">
+                <colgroup>
+                    <col style="width:20%;">
+                    <col style="width:40%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th class="tableblock halign-left valign-top">Kısıtlama</th>
+                    <th class="tableblock halign-left valign-top">Açıklama</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>ARC42
+                    </em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Dokümantasyon formatı ARC42 standartlarına uygun olmalıdır.
+                    </em></p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Türkçe</em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Projenin bu dilde gerçekleştirilmesi gerekiyor.
+                    </em></p></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+<div class="sectionbody">
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="section-system-scope-and-context"><a class="anchor" href="#section-system-scope-and-context"></a>3. Sistem ve Kapsam İçeriği</h2>
+    <div class="paragraf">
+        <p>GeWeb , kullanıcıların incelemek istedikleri konumlardaki en önemli yenilenebilir enerji kaynaklarından biri olan güneş enerjisi hakkında oldukça faydalı haritalara ve çeşitli bilimsel verilere sahip olabileceği bir yazılım sistemidir. Haritalar seçilen bölgeye göre spesifik veriler içerecek ve paylaşılan kullanıcı konum bilgilerine göre kendisini geliştirip fazla kullanıcıya ait girişlerin olduğu bölgeler de harita üzerine eklenerek kullanıcılar bilgilendirilmiş olacak. Paylaşılan kullanıcı bilgileri projeye göre özel bir bölmede saklanıp güvenliği sağlanacak.</p>
+        <br>
+        <p>GeWeb , kayıt olan hemen her kullanıcının erişebileceği genel bir yazılım çözümüdür. Kullanıcıya odaklanır ve aynı zamanda bölgelerin fiziki bir haritasını kullanıcının ihtiyacı doğrultusunda bilgisine sunar.</p>
+    </div>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_section-system-scope_3.1"><a class="anchor" href="#_section-system-scope_3.1"></a>3.1. İş Bağlamı</h3>
+<div class="paragraph">
+<p>GeWeb yazılımı , kullanıcının POD’undaki bilgileri yönetir ve kullanıcılardan gelen konum bilgisine göre bölgeler hakkında kullanıcıya bilgilendirme sağlar.Bunu yapabilmek için görüntülencek bir haritaya ve kullanıcı bilgilerine ihtiyaç vardır.</p>
+    <br>
+<p>Jenerik bir yazılım çözümü olduğundan bu gereksinimleri karşılamak için kullanıcıdan aldığı bilgilerle kullanıcıya daha iyi bilgiler sunmayı hedefler.</p>
+    <br>
+<p>Öncelikle bir harita sağlayıcıya ihtiyaç var , çünkü GeWeb’in değişikliklere karşı esnek olmasını istiyoruz, böylece görüntülediği bölgeyi , sistemimiz tarafından depolanan tüm bu verilerle büyük bir veri tabanına ihtiyaç duymadan değiştirebiliriz. İkincisi, kimlik doğrulama ve veri işleme konusunda bize yardımcı olacak bir POD yöneticisi.Üçüncü ve son olarak da kullancının çeşitli sorularına yanıtlar bulabileceği bir arama motoru sağlaması için kullanışlı bir GPT ağı desteği.</p>
+    <p><strong>İş bağlamının şeması (Business Context's Diagram)</strong></p>
+    <br>
+    <img src="images/işbağlamı.jpeg" alt="">
+    <br>
+    <br>
+    <p>Harici etki alanı arayüzleri :Harita için esas olarak iki kaynak kullanacağız:</p>
+    <ul>
+        <li>Google haritaları</li>
+        <li>Inrup'un Solid React kütüphanesi</li>
+    </ul>
+    <p>Kullanıcı verilerini yönetmek için Inrupt Javascript İstemci Kitaplıklarını (Solid React SDK - solid-ui-react) kullanan bir React kitaplığı.</p>
+    <table class="tableblock frame-all grid-all" style="width:100%; ">
+        <colgroup>
+            <col style="width:20%;">
+            <col style="width:40%;">
+            <col style="width:40%;">
+        </colgroup>
+        <thead>
+        <tr>
+            <th class="tableblock halign-left valign-top">İletişim Ortaklığı</th>
+            <th class="tableblock halign-left valign-top">Girdiler</th>
+            <th class="tableblock halign-left valign-top">Çıktılar</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Google
+            </em></p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Coğrafi koordinatlar ve yakınlaştırma düzeyi
+            </em></p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Harita nesnesi
+            </em></p></td>
+        </tr>
+        <tr>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em>solid-ui-react(Interrupt)</em></p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em> podURL,oturum
+            </em></p></td>
+            <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Veri kümeleri
+            </em></p></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_section-system-scope_3.2"><a class="anchor" href="#_section-system-scope_3.2"></a>3.2. Teknik Bağlam</h3>
+<div class="paragraph">
+<p>Express'i paket yöneticisi olarak kullanarak GeWeb’i bir React Uygulaması olarak geliştirmeye karar verdik.</p>
+    <br>
+<p>Hedeflerden biri uygulamanın merkezi olmayan hale getirilmesidir. Bu, kullanıcının gizliliğini sağlamamıza yardımcı olacak POD'lar sayesinde yapılır.</p>
+    <br>
+<p>Kullanıcılar, uygulamanın kendisi değil, kendi bilgilerine erişimin sahibi olan ve bu erişimi yöneten kişilerdir. Bunu gerçekleştirmek için her kullanıcı, gerekli bilgilerin çıkarıldığı bir Katı POD'un (Kişisel Çevrimiçi Veri Deposu) sahibi olacaktır.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
+<h3 id="_section-system-scope_3.3"><a class="anchor" href="#_section-system-scope_3.3"></a>3.3. Teknoloji Kararları</h3>
+<div class="paragraph">
+<p>GeWeb’i esas olarak Express sunuculu bir React çerçevesinde uygulayacağız.React, podların kullanımına ve ayrıca tek sayfalık uygulamaların geliştirilmesine gerçekten uygun bir çerçevedir.</p>
+<br>
+<p>Javascript: Hiçbirimizin ne Javascript ne de Typescript konusunda deneyimi olmadığı için seçtiğimiz programlama dili Javascript'ti ve ilkinin öğrenme eğrisinin üstesinden gelmenin biraz daha kolay olabileceğini düşündük.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
+<h3 id="_section-system-scope_3.4"><a class="anchor" href="#_section-system-scope_3.4"></a>3.4. Temel Kalite Hedeflerine Nasıl Ulaşacağına İlişkin Kararlar</h3>
+<div class="paragraph">
+<p>Uygulamanın haritalarıyla ilgili olarak Google Haritalar API'sini kullanıyoruz. Uygulamanın ihtiyaç duyabileceğimiz her lokasyonu ile ilgili bize güzel bir altyapı getiriyor.</p>
+<br>
+<p>Bölmelerle doğru bağlantıyı kurmak için ilgili API'leri kullanıyoruz.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+<div class="sect2">
+<h3 id="_section-system-scope_3.5"><a class="anchor" href="#_section-system-scope_3.5"></a>3.5. İlgili Organizasyonel Kararlar</h3>
+<div class="paragraph">
+<p>Sürüm kontrolüyle ilgili git iş akışının kullanılması. Bu şekilde, uygulamayı geliştirirken kodun sürümlendirilmesi ve güncellenmesi üzerinde büyük miktarda kontrole sahip olabiliriz.</p>
+    <br>
+<p>Diğer geliştiriciler (yalnızca potansiyel kullanıcılar için değil) için anlaşılması kolay bir uygulama geliştirmek amacıyla proje belgelerinin sürekli olarak gözden geçirilmesi ve güncellenmesi.</p>
+<br>
+<p>Oturum açma, yönetimi veya kullanıcıların kendi profili gibi bölmelerle ilgili tüm olası eylemleri katı sağlayıcıya yüklenmiştir.</p>
+</div>
+<div style="page-break-after: always;"></div>
+</div>
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="section-solution-strategy"><a class="anchor" href="#section-solution-strategy"></a>4. Çözüm stratejisi</h2>
+    <div class="paragraf">
+        <br>
+        <p>GeWeb projesinin çözüm stratejisi, kullanıcıların güneş enerjisi potansiyeli verilerini keşfetmelerini sağlamak ve enerji üretimi için yatırım yapacakları potansiyel yerleri belirlemelerine yardımcı olmaktır. Bu amaca yönelik olarak, proje kullanıcı dostu bir arayüz ve güçlü bir veritabanı alt yapısı ile tasarlanmıştır.</p>
+    </div>
+<div class="sectionbody">
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="section-building-block-view"><a class="anchor" href="#section-building-block-view"></a>5. Bina Blok Görünümü</h2>
+    <div class="paragraf">
+        <p>Bina Blok Görünümü" (Building Block View), bir yazılım sisteminin temel bileşenlerini ve bu bileşenler arasındaki ilişkileri gösteren bir mimari görünümdür. Bu görünüm, sistemin bileşenlerini ve bu bileşenlerin nasıl bir araya geldiğini, birlikte çalıştığını açıklar. Bina blok görünümü, bir yazılım sisteminin yapı taşlarını ve bu taşların nasıl bir araya geldiğini anlamak için kullanılır.
+        </p>
+        <br>
+        <p></p>
+    </div>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_whitebox_overall_system"><a class="anchor" href="#_whitebox_overall_system"></a>5.1. BeyazKutu Genel Sistemi</h3>
+<div class="paragraph">
+<p>Sistemin genel yapısı, kullanıcı arayüzü, veritabanı, kontrolörler ve harita işlemleri gibi ana bileşenleri içerir. Bu bileşenler, sistemdeki temel işlevselliği gerçekleştirmek için etkileşim içindedir.</p>
+</div>
+
+<div class="sect3">
+<h4 id="__name_black_box_1"><a class="anchor" href="#__name_black_box_1"></a>5.1.1. SiyahKutu Genel Sistemi</h4>
+<div class="paragraph">
+<p>Blackbox (Kara Kutu) görünümü, bir sistemin içerdiği işlevselliği açıklamak yerine, sistemle etkileşimde bulunan diğer unsurlarla olan ilişkileri vurgular. Bu görünümde, içte neler olduğu detaylı olarak belirtilmez; sadece sistemin dış dünyayla nasıl etkileşimde bulunduğu ve hangi hizmetleri sunduğu ön plandadır.</p>
+    <br>
+    <img src="images/siyahkutu.png" alt="siyahkutu">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_level_2"><a class="anchor" href="#_level_2"></a>5.2. Level 2</h3>
+<div class="paragraf">
+    <p>Bu seviye, sistem içindeki temel bileşenlerin daha ayrıntılı bir görünümünü sunar. Örneğin, veritabanı yönetimi, harita işlemleri ve kullanıcı oturumu yönetimi gibi alt sistemlere daha fazla odaklanır.</p>
+    <img src="images/level2.png" alt="level2" style="max-height: 50%; max-width: 50%;">
+</div>
+
+</div>
+<div class="sect2">
+<h3 id="_level_3"><a class="anchor" href="#_level_3"></a>5.3. Level 3</h3>
+    <div class="paragraf">
+        <p>Seviye 3, seviye 2'deki bileşenleri daha da ayrıntılı bir şekilde inceler. Örneğin, harita işlemleri içindeki özel eleman eklemeleri (lokasyon vb.) veya güvenlik önlemleri gibi spesifik alt görevlere odaklanır.</p>
+    </div>
+
+
+
+</div>
+<div class="sect1">
+<h2 id="section-runtime-view"><a class="anchor" href="#section-runtime-view"></a>6. Çalışma Zamanı Görünümü</h2>
+    <p>
+        Çalışma Zamanı Görünümü, bir yazılım sisteminin işlemesi sırasında bileşenler arasındaki etkileşimleri ve işlevselliği gösteren bir mimari görünümdür.</p>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="__runtime_scenario_1"><a class="anchor" href="#__runtime_scenario_1"></a>6.1. &lt;Runtime Scenario 1 - Kullanıcı Girişi (User login)&gt;</h3>
+    <p>Kullanıcı, GeWeb platformuna erişmek için tarayıcısını kullanır. Sisteme giriş yapmak için kullanıcı adı ve şifresini girdikten sonra, sistem bu bilgileri doğrular.</p>
+    <img src="images/kullanıcıgiriş.png" alt="kullanıcıgr">
+
+</div>
+<div class="sect2">
+<h3 id="__runtime_scenario_2"><a class="anchor" href="#__runtime_scenario_2"></a>6.2. &lt;Runtime Scenario 2 - Kullanıcı Haritaya Özel Eleman Ekler (User adds private elements to the map)&gt;</h3>
+    <p>Kullanıcı, haritaya özel bir konum eklemek istediğinde, GeWeb sistemi bu talebi işler ve harita üzerinde belirtilen yere konumu kaydeder.</p>
+    <img src="images/runtime2.png" alt="runtime2">
+</div>
+
+<div class="sect1">
+<h2 id="section-deployment-view"><a class="anchor" href="#section-deployment-view"></a>7. Kesişen Kavramlar</h2>
+    <p>Bu projenin dokümantasyonunda, sistemimizin temel kavramlarına odaklanacağız. Bu kavramlar, sistemimizin genel mimarisini, kullanıcı deneyimini, güvenlik ve koruma önlemlerini, barındırma hizmetini ve kalite gereksinimlerini kapsayacaktır.</p>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_infrastructure_level_1"><a class="anchor" href="#_infrastructure_level_1"></a>7.1. Etki Alanı Modeli</h3>
+<div class="paragraph">
+    <p>Güneş enerjisi projesi için etki alanı modelimizi şu şekilde belirleyebiliriz:</p>
+    <ul>
+        <li>Kullanıcı Modülü: Kullanıcıların konumları işaretleyebileceği, güneş enerji panellerinin verilerini gözlemleyebileceği ve indirebileceği bir arayüz sağlar.</li>
+        <li>Veri Modülü: Konumlar ve incelemeler gibi verileri depolar ve işler. Bu modül, kullanıcıların bilgilerini güvenli bir şekilde kaydeder.
+        </li>
+    </ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_infrastructure_level_2"><a class="anchor" href="#_infrastructure_level_2"></a>7.2. Mimari ve Tasarım Desenleri</h3>
+    <div class="paragraph">
+        <p>Güneş enerjisi projesi için seçtiğimiz mimari desen, Modüler Monolit Mimari'dir. Bu mimari, mantığı modüllere böler ve her bir modülü bağımsız ve izole bir şekilde tutar. İki ana modül, Konumlar ve İncelemeler'dir, ve bunlar ayrı bağımsız depolama birimlerinde bulunur.
+        </p>
+    </div>
+<div class="sect2">
+    <h3 id="_infrastructure_level_3"><a class="anchor" href="#_infrastructure_level_3"></a>7.3. Test Edilebilirlik</h3>
+    <div class="paragraph">
+        <p>Geliştirme sürecinde, Birim Testi kullanarak her bir işlevi ayrı ayrı test edeceğiz. Bu, uygulamanın sorunsuz bir şekilde çalıştığından ve tüm senaryoları karşıladığından emin olmamıza yardımcı olacak.
+        </p>
+    </div>
+</div>
+    <div class="sect2">
+        <h3 id="_infrastructure_level_4"><a class="anchor" href="#_infrastructure_level_4"></a>7.4. Koruma ve Güvenlik</h3>
+        <div class="paragraph">
+            <p>Güvenlik, GeMap'in önceliklerinden biridir. Kullanıcı verileri, her bir kullanıcının ayrı bir POD'unda güvenli bir şekilde saklanacaktır, ve müşterilere verilerini kiminle paylaşmak istediklerini seçme seçeneği sunulacaktır.
+            </p>
+        </div>
+    </div>
+
+
+
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="section-concepts"><a class="anchor" href="#section-concepts"></a>8. Tasarım Kararları</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="__em_concept_1_em"><a class="anchor" href="#__em_concept_1_em"></a>8.1. Klasör Yapısı</h3>
+<div class="paragraph">
+<p>Uygulamanın klasör yapısı, çeşitli GeMap çözümlerinin çakışmasını önlemek ve kullanıcıların farklı GeMap uygulamalarını sorunsuz bir şekilde kullanmasına olanak tanımak amacıyla düzenlenmiştir. Örneğin:
+</p>
+    <img src="images/guneşEnerjiProjesi.png" alt="">
+</div>
+</div>
+<div class="sect2">
+<h3 id="__em_concept_2_em"><a class="anchor" href="#__em_concept_2_em"></a>8.2. Barındırma Hizmetleri</h3>
+<div class="paragraph">
+<p>Azure üzerinde barındırma seçeneğimizi kullanarak, uygulamamızın bir görüntüsünden yapılmış bir docker konteynerini barındıracak sanal bir makine oluşturacağız. Inrupt ile uyumlu olabilmesi için 443(https) portunu kullanacağız.
+    Gerekli https sertifikalarını etkinleştirmek için certbot, letencrypt ve docker birimlerini kullanacağız.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="section-design-decisions"><a class="anchor" href="#section-design-decisions"></a>9. Kalite Gereksinimleri</h2>
+<div class="sectionbody">
+    <p>Bu bölümde, tüm kalite gereksinimlerini içeren bir kalite ağacı oluşturacağız. Paydaşlarla işbirliği yaparak somut ve ölçülebilir gereksinimleri belirleyeceğiz. Bu gereksinimler, mimari kararlar üzerinde büyük bir etkiye sahip olacaktır.
+    </p>
+<div style="page-break-after: always;"></div>
+    <div class="sect2">
+        <h3 id="section-design_1"><a class="anchor" href="#section-design_1"></a>9.1. Kalite Ağacı</h3>
+        <div class="paragraph">
+            <img src="images/kalite.png" alt="kalite">
+            <ul>
+                <li>Performans: Uygulamanın hızlı ve sorunsuz çalışması.</li>
+                <li>Güvenilirlik: Uygulamanın kesintisiz bir şekilde çalışması ve veri kaybını önleme.</li>
+                <li>Güvenlik: Kullanıcı verilerinin güvenli bir şekilde saklanması ve iletilmesi.</li>
+                <li>Kullanılabilirlik: Kullanıcı dostu bir arayüz ve kolay kullanım.</li>
+                <li>Taşınabilirlik: Uygulamanın farklı platformlarda sorunsuz çalışabilirliği.</li>
+            </ul>
+            <p>Bu kalite gereksinimleri, mimari ve tasarım kararlarını etkileyecek ve projenin başarılı bir şekilde tamamlanmasını sağlayacaktır.</p>
+        </div>
+        <h3 id="section-design_2"><a class="anchor" href="#section-design_2"></a>9.2. Kalite Senaryoları</h3>
+        <div class="paragraf">
+            <table class="tableblock frame-all grid-all" style="width:100%; ">
+                <colgroup>
+                    <col style="width:20%;">
+                    <col style="width:40%;">
+                    <col style="width:40%;">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th class="tableblock halign-left valign-top">Kalite Gereksinimi</th>
+                    <th class="tableblock halign-left valign-top">Senaryo</th>
+                    <th class="tableblock halign-left valign-top">Öncelik</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Cevaplanabilirlik
+                    </em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Uygulamanın hızlı tepki süresine sahip olması gerekiyor. Herhangi bir kullanıcı, uygulamanın özelliklerini büyük bir sorun yaşamadan ve yanıt sürelerinde gözle görülür gecikmeler yaşamadan kullanabilmelidir.
+                    </em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Yüksek
+                    </em></p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Sürdürülebilirlik</em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Kodun tamamı kolaylıkla değiştirilip yeniden kullanılabilecek şekilde yazılmalıdır. Ayrıca herhangi bir hatanın veya kusurun kolayca düzeltilebilmesi önemlidir. GeWeb, kodunun ve belgelerinin okunabilirliğine dikkat edilerek geliştirilecektir.
+                    </em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Yüksek
+                    </em></p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Güvenlik</em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Kullanıcının verileri güvenli bir bölmeye kaydedilecek ve buradan alınacaktır. Kullanıcıların özel verileri konusunda uygulamamıza güvenmelerini istiyoruz.
+                    </em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Yüksek
+                    </em></p></td>
+                </tr>
+                <tr>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Kullanılabilirlik</em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Uygulamamızın kullanımı her türlü kullanıcı için kolay olacaktır. Anlaşılması kolay olmalı ve istenen tüm eylemlerin gerçekleştirilmesi herhangi bir soruna yol açmamalıdır.
+                    </em></p></td>
+                    <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Orta
+                    </em></p></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="sect1">
+<h2 id="section-technical-risks"><a class="anchor" href="#section-technical-risks"></a>11. Riskler ve Teknik Borçlar</h2>
+    <div class="paragraf">
+        <table class="tableblock frame-all grid-all" style="width:100%; ">
+            <colgroup>
+                <col style="width:20%;">
+                <col style="width:40%;">
+            </colgroup>
+            <thead>
+            <tr>
+                <th class="tableblock halign-left valign-top">Riskler</th>
+                <th class="tableblock halign-left valign-top">Açıklama</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Zaman</em></p></td>
+                <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Uygulamayı geliştirmek için çok fazla zamanımız yok, bu nedenle planlı bir şekilde projeyi yürütmemiz gerekiyor.
+                </em></p></td>
+            </tr>
+            <tr>
+                <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Takım</em></p></td>
+                <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Bu projeden önce birbirimizi tanımıyorduk bu nedenle iletişim sorunları yaşama ihtimaline karşı hazırlıklı olmalıyız.
+                </em></p></td>
+            </tr>
+            <tr>
+                <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Projenin Büyüklüğü</em></p></td>
+                <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Çoğumuzun sıfırdan öğrenmesi gereken birçok yeni teknolojinin bilgisine ihtiyaç duyan bu tür bir projede çalışıyor olmak, ilk kez başımıza gelen bir durum.</em>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="paragraf">
+        <table class="tableblock frame-all grid-all" style="width:100%; ">
+            <colgroup>
+                <col style="width:20%;">
+                <col style="width:40%;">
+            </colgroup>
+            <thead>
+            <tr>
+                <th class="tableblock halign-left valign-top">Teknik Borçlar</th>
+                <th class="tableblock halign-left valign-top">Açıklama</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Google Maps API</em></p></td>
+                <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Çoğumuzun projede ilk kez kullanacak olması ve daha önce herhangi bir tecrübeye sahip olmaması sorun yaratıcaktır.
+                </em></p></td>
+            </tr>
+            <tr>
+                <td class="tableblock halign-left valign-top"><p class="tableblock"><em>JavaScript</em></p></td>
+                <td class="tableblock halign-left valign-top"><p class="tableblock"><em>Dilde uzmanlaşmamız gerekiyor.
+                </em></p></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+<div class="sectionbody">
+<div style="page-break-after: always;"></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="section-glossary"><a class="anchor" href="#section-glossary"></a>12. Sözlük</h2>
+
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all" style="width:100%; ">
+<colgroup>
+<col style="width:33%;">
+<col style="width:66%;"> 
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Terim</th>
+<th class="tableblock halign-left valign-top">Tanım</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>API</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>API, Uygulama Programlama Arayüzü'nün kısaltmasıdır. API bağlamında, Uygulama kelimesi belirli bir işlevi olan herhangi bir yazılımı ifade eder. Arayüz, iki uygulama arasındaki hizmet sözleşmesi olarak düşünülebilir. Bu sözleşme, iki uygulamanın birbirleriyle nasıl iletişim kurduklarını talepler ve yanıtlar kullanarak tanımlar.</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>JavaScript</em></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Dinamik olarak güncellenen içerik oluşturmanıza, multimedya üzerinde kontrol sağlamanıza, resimleri animasyonlandırmanıza ve neredeyse her şeyi yapmanıza olanak tanıyan bir komut dosyası dili.</em></p></td>
+</tr>
+</tbody>
+</table>
+    <br>
+    <div class="paragraph">
+        <p><strong>Arc42 Hakkında</strong></p>
+    </div>
+    <div class="paragraph lead">
+        <p>arc42, yazılım ve sistem mimarisi için profesyonel bir şablondur.</p>
+    </div>
+    <div class="paragraph">
+        <p>Template Version 8.2 EN. (based upon AsciiDoc version), January 2023</p>
+    </div>
+    <div class="paragraph">
+        <p>Created, maintained and &#169; by Dr. Peter Hruschka, Dr. Gernot Starke and contributors.
+            See <a href="https://arc42.org">https://arc42.org</a>.</p>
+    </div>
+    <hr>
+    <div style="page-break-after: always;"></div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 8.2 EN<br>
+Last updated 2023-01-28 14:51:36 +00:00
+</div>
+</div>
+
+</body>
+</html>
